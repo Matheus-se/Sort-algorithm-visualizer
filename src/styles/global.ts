@@ -4,6 +4,6 @@ export default createGlobalStyle`
     html, body {
         margin: 0;
         padding: 0;
-        background-color: red;
+        background-color: #121214;
     }
 `
