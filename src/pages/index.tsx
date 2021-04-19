@@ -233,9 +233,9 @@ export default function Home() {
                 className={`mx-2 my-lg-0 my-2 btn btn-outline btn-types btn-${index}`}
                 onClick={() => {
                   setSortType(() => type);
-                  document.querySelectorAll<HTMLElement>('.btn-types').forEach(button => {
-                    button.style.backgroundColor = "transparent";
-                    button.style.color = "#34a40";
+                  document.querySelectorAll<HTMLElement>('.btn-types').forEach(btn => {
+                    btn.style.backgroundColor = "transparent";
+                    btn.style.color = "#343a40";
                   });
                   document.querySelector<HTMLElement>(`.btn-${index}`).style.backgroundColor = "#343a40";
                   document.querySelector<HTMLElement>(`.btn-${index}`).style.color = "white";
