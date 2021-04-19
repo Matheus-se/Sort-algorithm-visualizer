@@ -150,8 +150,9 @@ export default function Home() {
         
       indexes.map(
         (idx) => {
-            document.querySelector<HTMLElement>(`.bar-${idx}`).style.backgroundColor = "aqua";
-            if (idx != pivotIndex);
+            if (idx != pivotIndex) {
+              document.querySelector<HTMLElement>(`.bar-${idx}`).style.backgroundColor = "aqua";
+            };
           }
       );
 
@@ -233,9 +234,11 @@ export default function Home() {
                 onClick={() => {
                   setSortType(() => type);
                   document.querySelectorAll<HTMLElement>('.btn-types').forEach(button => {
-                    button.style = "background-color: transparent; color: #34a40";
+                    button.style.backgroundColor = "transparent";
+                    button.style.color = "#34a40";
                   });
-                  document.querySelector<HTMLElement>(`.btn-${index}`).style = "background-color: #343a40; color: white";
+                  document.querySelector<HTMLElement>(`.btn-${index}`).style.backgroundColor = "#343a40";
+                  document.querySelector<HTMLElement>(`.btn-${index}`).style.color = "white";
                 }}
               >
                 {type}
