@@ -144,20 +144,20 @@ export default function Home() {
       pivots.push(pivotIndex);
 
       for (let i = start; i < end; i++) {
-        document.querySelectorAll(`.value-bar`).forEach((bar) => {
+        document.querySelectorAll<HTMLElement>(`.value-bar`).forEach((bar) => {
           bar.style.backgroundColor = "white";
         });
         
       indexes.map(
         (idx) => {
-            document.querySelector(`.bar-${idx}`).style.backgroundColor = "aqua";
+            document.querySelector<HTMLElement>(`.bar-${idx}`).style.backgroundColor = "aqua";
             if (idx != pivotIndex);
           }
       );
 
         pivots.map(
           (pivot) =>
-            (document.querySelector(`.bar-${pivot}`).style.backgroundColor =
+            (document.querySelector<HTMLElement>(`.bar-${pivot}`).style.backgroundColor =
               "tomato")
         );
 
@@ -232,10 +232,10 @@ export default function Home() {
                 className={`mx-2 my-lg-0 my-2 btn btn-outline btn-types btn-${index}`}
                 onClick={() => {
                   setSortType(() => type);
-                  document.querySelectorAll('.btn-types').forEach(button => {
+                  document.querySelectorAll<HTMLElement>('.btn-types').forEach(button => {
                     button.style = "background-color: transparent; color: #34a40";
                   });
-                  document.querySelector(`.btn-${index}`).style = "background-color: #343a40; color: white";
+                  document.querySelector<HTMLElement>(`.btn-${index}`).style = "background-color: #343a40; color: white";
                 }}
               >
                 {type}
