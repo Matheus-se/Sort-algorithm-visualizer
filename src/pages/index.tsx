@@ -1,9 +1,13 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useEffect, useState } from "react";
+import { Navbar } from "react-bootstrap";
+import { checkSorting } from "../utils/checkSorting";
 import sleep from "../utils/sleep";
+import { swap } from "../utils/swap";
 
 export default function Home() {
   const [values, setValues] = useState([]);
+  const [algorithmIsRunning, setAlgorithmIsRunning] = useState(false);
   const [sortType, setSortType] = useState("Bubble sort");
   const sortTypes = [
     "Bubble sort",
@@ -11,29 +15,35 @@ export default function Home() {
     "Merge sort",
     "Quick sort",
   ];
+  const pivots = [];
+  const indexes = [];
 
-  function handleType(type) {
+  async function handleType(type) {
     let sort;
+    setAlgorithmIsRunning(() => true);
 
     switch (type) {
       case "Merge sort":
         sort = new Bubble();
-        sort.bubbleSort(values);
+        await sort.bubbleSort(values);
         break;
       case "Bubble sort":
         sort = new Bubble();
-        sort.bubbleSort(values);
+        await sort.bubbleSort(values);
         break;
       case "Quick sort":
-        sort = new Bubble();
-        sort.bubbleSort(values);
+        sort = new Quick();
+        await sort.quickSort(values, 0, values.length - 1);
         break;
       case "Selection sort":
         sort = new Selection();
-        sort.selectionSort(values);
+        await sort.selectionSort(values);
         break;
     }
-  }  
+
+    await checkSorting(values, 0, values.length);
+    setAlgorithmIsRunning(() => false);
+  }
 
   class Bubble {
     n: number;
@@ -48,24 +58,22 @@ export default function Home() {
       do {
         arrayIsNotSorted = false;
         for (let i = 1; i < this.n; i++) {
-          document.querySelectorAll<HTMLElement>(`.value-bar`).forEach((bar) => {
-            bar.style.backgroundColor = "white";
-          });
-          document.querySelector<HTMLElement>(`.bar-${i}`).style.backgroundColor = "red";
-          await sleep(1);
+          document
+            .querySelectorAll<HTMLElement>(`.value-bar`)
+            .forEach((bar) => {
+              bar.style.backgroundColor = "white";
+            });
+          document.querySelector<HTMLElement>(
+            `.bar-${i}`
+          ).style.backgroundColor = "red";
           if (array[i] < array[i - 1]) {
-            let data = array;
-            [data[i], data[i - 1]] = [data[i - 1], data[i]];
-            setValues(() => [...data]);
+            let swapArray = await swap(array, i, i - 1);
+            setValues(() => [...swapArray]);
             arrayIsNotSorted = true;
           }
         }
         this.n -= 1;
       } while (arrayIsNotSorted);
-      for (let j = 0; j < values.length; j++) {
-        document.querySelector<HTMLElement>(`.bar-${j}`).style.backgroundColor = "green";
-        await sleep(1);
-      }
     }
   }
 
@@ -83,31 +91,110 @@ export default function Home() {
         minumunElement = i;
 
         for (let j = i; j < this.n; j++) {
-          await sleep(1);
-
           // componentizar
-          document.querySelectorAll<HTMLElement>(`.value-bar`).forEach((bar) => {
-            bar.style.backgroundColor = "white";
-          });
+          document
+            .querySelectorAll<HTMLElement>(`.value-bar`)
+            .forEach((bar) => {
+              bar.style.backgroundColor = "white";
+            });
           document.querySelector<HTMLElement>(
             `.bar-${minumunElement}`
           ).style.backgroundColor = "blue";
-          document.querySelector<HTMLElement>(`.bar-${j}`).style.backgroundColor = "red";
+          document.querySelector<HTMLElement>(
+            `.bar-${j}`
+          ).style.backgroundColor = "red";
+          await sleep(1);
 
           if (array[j] < array[minumunElement]) {
             minumunElement = j;
           }
         }
 
-        // componentizar
-        let data = array;
-        [data[i], data[minumunElement]] = [data[minumunElement], data[i]];
-        setValues(() => [...data]);
+        let swapArray = await swap(array, i, minumunElement);
+        setValues(() => [...swapArray]);
+      }
+    }
+  }
+
+  class Quick {
+    constructor() {}
+
+    async quickSort(array: number[], start: number, end: number) {
+      if (start >= end) {
+        return;
       }
 
-      for (let j = 0; j < values.length; j++) {
-        document.querySelector<HTMLElement>(`.bar-${j}`).style.backgroundColor = "green";
-        await sleep(1);
+      let index = await this.partition(array, start, end);
+      pivots.splice(pivots.indexOf(index), 1);
+
+      await Promise.all([
+        this.quickSort(array, start, index - 1),
+        this.quickSort(array, index + 1, end),
+      ]);
+    }
+
+    async partition(array: number[], start: number, end: number) {
+      for (let j = start; j < end; j++) {
+        indexes.push(j);
+      }
+
+
+      let pivotValue = array[end];
+      let pivotIndex = start;
+      pivots.push(pivotIndex);
+
+      for (let i = start; i < end; i++) {
+        document.querySelectorAll(`.value-bar`).forEach((bar) => {
+          bar.style.backgroundColor = "white";
+        });
+        
+      indexes.map(
+        (idx) => {
+            document.querySelector(`.bar-${idx}`).style.backgroundColor = "aqua";
+            if (idx != pivotIndex);
+          }
+      );
+
+        pivots.map(
+          (pivot) =>
+            (document.querySelector(`.bar-${pivot}`).style.backgroundColor =
+              "tomato")
+        );
+
+        if (array[i] < pivotValue) {
+          let swapArray = await swap(array, i, pivotIndex);
+          await setValues(() => [...swapArray]);
+
+          pivots.splice(pivots.indexOf(pivotIndex), 1);
+          pivotIndex++;
+          pivots.push(pivotIndex);
+        }
+      }
+
+      let swapArray = await swap(array, pivotIndex, end);
+      setValues(() => [...swapArray]);
+
+      for (let j = start; j < end; j++) {
+        indexes.splice(indexes.indexOf(j), 1);
+      }
+
+      return pivotIndex;
+    }
+  }
+
+  class Merge {
+    constructor() {}
+
+    mergeSort(array) {
+      if (array.length > 1) {
+        const half = Math.floor(array.length / 2);
+        const firstHalf = this.mergeSort(array.slice(0, half));
+        const secondHalf = this.mergeSort(array.slice(half));
+        const sortedArray = [];
+
+        for (let i = 0; i < firstHalf.length; i++) {}
+      } else {
+        return array;
       }
     }
   }
@@ -120,30 +207,50 @@ export default function Home() {
 
   useEffect(() => {
     getRandomValues(100, 300);
-    console.log(values);
   }, []);
 
   return (
     <>
-      <nav className="navbar navbar-light bg-light">
+      <Navbar
+        className="navbar navbar-expand-lg navbar-light bg-light"
+        expand="lg"
+      >
         <button
+          disabled={algorithmIsRunning}
           className="btn btn-outline-dark"
           onClick={() => getRandomValues(100, 300)}
         >
           Change Data
         </button>
-        <div className="p-0 m-0">
-          {sortTypes.map((type, index) => (
-            <button key={index} className="mx-2 btn btn-outline-dark" onClick={() => setSortType(() => type)} >{type}</button>
-          ))}
-        </div>
+        <Navbar.Toggle aria-controls="basic-navbar-nav" />
+        <Navbar.Collapse id="basic-navbar-nav">
+          <div className="m-0 p-0">
+            {sortTypes.map((type, index) => (
+              <button
+                disabled={algorithmIsRunning}
+                key={index}
+                className={`mx-2 my-lg-0 my-2 btn btn-outline btn-types btn-${index}`}
+                onClick={() => {
+                  setSortType(() => type);
+                  document.querySelectorAll('.btn-types').forEach(button => {
+                    button.style = "background-color: transparent; color: #34a40";
+                  });
+                  document.querySelector(`.btn-${index}`).style = "background-color: #343a40; color: white";
+                }}
+              >
+                {type}
+              </button>
+            ))}
+          </div>
+        </Navbar.Collapse>
         <button
+          disabled={algorithmIsRunning}
           className="btn btn-outline-dark"
           onClick={() => handleType(sortType)}
         >
           Sort
         </button>
-      </nav>
+      </Navbar>
 
       <div className="container w-100 d-flex">
         {values &&
@@ -162,4 +269,3 @@ export default function Home() {
     </>
   );
 }
-
