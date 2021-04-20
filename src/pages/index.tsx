@@ -293,7 +293,7 @@ export default function Home() {
             </div>
             <div className="m-0 p-0 mx-2">
               <p className="m-0">
-                <small className="font-weight-bold">SPEED</small>
+                <small className="font-weight-bold">SLOWNESS</small>
               </p>
               <input
                 disabled={algorithmIsRunning}
