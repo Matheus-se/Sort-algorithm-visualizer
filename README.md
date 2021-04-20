@@ -1,12 +1,12 @@
 # Sort visualizer project
 
-<p align='center'><img src='https://nigelalford.dev/content/images/2020/10/what-is-an-algorithm-featured12-30-2019_083310.png' width=100%></p>
+<p align='center'><img src='https://i.imgur.com/fWsWyQp.jpg' width=100%></p>
 
 > Status: In Progress :construction:
 
 ## Description :pencil:
 
-This project was created for me to pratice some sort algorithms in a diferent and harder way. It was entirely made with Java script and css with styled components, also a little bit of bootstrap. I had a lot of fun and I want to work more in this project in the future to compare how much I have evolved.
+This project was created mainly for sort algorithm studies in a different and harder way. It was entirely made with typescript in Next.js, CSS with styled-components, and bootstrap. I had a lot of fun and I want to work more on this project in the future to compare how much I have evolved.
 
 ## Depployed project on Vercel :computer:
 
