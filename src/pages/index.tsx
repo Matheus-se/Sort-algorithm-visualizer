@@ -1,5 +1,4 @@
 import "bootstrap/dist/css/bootstrap.min.css";
-import { time } from "node:console";
 import { useEffect, useState } from "react";
 import { Navbar } from "react-bootstrap";
 import changeAllBarsColor from "../utils/changeAllBarColors";
@@ -192,6 +191,8 @@ export default function Home() {
       this.mergeSortHelper(auxiliaryArray, startIdx, middleIdx, mainArray);
       this.mergeSortHelper(auxiliaryArray, middleIdx + 1, endIdx, mainArray);
       this.merge(mainArray, startIdx, middleIdx, endIdx, auxiliaryArray);
+
+      return;
     }
 
     async merge(mainArray, startIdx, middleIdx, endIdx, auxiliaryArray) {
