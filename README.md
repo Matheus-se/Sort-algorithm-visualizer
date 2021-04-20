@@ -1,34 +1,28 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Sort visualizer project
 
-## Getting Started
+<p align='center'><img src='https://nigelalford.dev/content/images/2020/10/what-is-an-algorithm-featured12-30-2019_083310.png' width=100%></p>
 
-First, run the development server:
+> Status: In Progress :construction:
 
-```bash
-npm run dev
-# or
-yarn dev
-```
+## Description :pencil:
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+This project was created for me to pratice some sort algorithms in a diferent and harder way. It was entirely made with Java script and css with styled components, also a little bit of bootstrap. I had a lot of fun and I want to work more in this project in the future to compare how much I have evolved.
 
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
+## Depployed project on Vercel :computer:
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
+> https://sort-visualizer-omega.vercel.app/
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+## Related projects :mag:
 
-## Learn More
+<h3>Brother's resume</h3>
+:computer: <a href='https://brothersresume-git-main-matheus-se.vercel.app/'>Deployed project in Vercel</a>
 
-To learn more about Next.js, take a look at the following resources:
+:octocat: <a href='https://github.com/Matheus-se/next'>GitHub repository</a>
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+<h3>Data science projects</h3>
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+:octocat: <a href='https://github.com/Matheus-se/Data-science'>GitHub page</a>
 
-## Deploy on Vercel
+## Contact :e-mail:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+matheushenrriquepeteleco@gmail.com
