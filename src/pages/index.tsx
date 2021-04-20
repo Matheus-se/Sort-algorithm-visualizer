@@ -1,12 +1,17 @@
 import "bootstrap/dist/css/bootstrap.min.css";
+import { time } from "node:console";
 import { useEffect, useState } from "react";
 import { Navbar } from "react-bootstrap";
+import changeAllBarsColor from "../utils/changeAllBarColors";
+import changeBarColor from "../utils/changeBarColor";
 import { checkSorting } from "../utils/checkSorting";
+import getRandomValues from "../utils/getRandomValues";
 import sleep from "../utils/sleep";
 import { swap } from "../utils/swap";
 
 export default function Home() {
   const [values, setValues] = useState([]);
+  const [nValues, setNValues] = useState(100);
   const [algorithmIsRunning, setAlgorithmIsRunning] = useState(false);
   const [sortType, setSortType] = useState("Bubble sort");
   const sortTypes = [
@@ -16,16 +21,25 @@ export default function Home() {
     "Quick sort",
   ];
   const pivots = [];
+  const compareValues = [];
   const indexes = [];
+  const barMaxHeight = 300;
+  const [speed, setSpeed] = useState(1);
 
   async function handleType(type) {
     let sort;
     setAlgorithmIsRunning(() => true);
+    changeAllBarsColor("white");
 
     switch (type) {
       case "Merge sort":
-        sort = new Bubble();
-        await sort.bubbleSort(values);
+        sort = new Merge();
+        await sort.mergeSortHelper(
+          values,
+          0,
+          values.length - 1,
+          values.slice()
+        );
         break;
       case "Bubble sort":
         sort = new Bubble();
@@ -58,16 +72,11 @@ export default function Home() {
       do {
         arrayIsNotSorted = false;
         for (let i = 1; i < this.n; i++) {
-          document
-            .querySelectorAll<HTMLElement>(`.value-bar`)
-            .forEach((bar) => {
-              bar.style.backgroundColor = "white";
-            });
-          document.querySelector<HTMLElement>(
-            `.bar-${i}`
-          ).style.backgroundColor = "red";
+          changeAllBarsColor("white");
+          changeBarColor(i, "red");
+          changeBarColor(i - 1, "blue");
           if (array[i] < array[i - 1]) {
-            let swapArray = await swap(array, i, i - 1);
+            let swapArray = await swap(array, i, i - 1, speed);
             setValues(() => [...swapArray]);
             arrayIsNotSorted = true;
           }
@@ -85,32 +94,23 @@ export default function Home() {
     }
 
     async selectionSort(array: number[]) {
-      let minumunElement: number;
+      let minimumnElement: number;
 
       for (let i = 0; i < this.n; i++) {
-        minumunElement = i;
+        minimumnElement = i;
 
         for (let j = i; j < this.n; j++) {
-          // componentizar
-          document
-            .querySelectorAll<HTMLElement>(`.value-bar`)
-            .forEach((bar) => {
-              bar.style.backgroundColor = "white";
-            });
-          document.querySelector<HTMLElement>(
-            `.bar-${minumunElement}`
-          ).style.backgroundColor = "blue";
-          document.querySelector<HTMLElement>(
-            `.bar-${j}`
-          ).style.backgroundColor = "red";
-          await sleep(1);
+          changeAllBarsColor("white");
+          changeBarColor(minimumnElement, "blue");
+          changeBarColor(j, "red");
+          await sleep(speed);
 
-          if (array[j] < array[minumunElement]) {
-            minumunElement = j;
+          if (array[j] < array[minimumnElement]) {
+            minimumnElement = j;
           }
         }
 
-        let swapArray = await swap(array, i, minumunElement);
+        let swapArray = await swap(array, i, minimumnElement, speed);
         setValues(() => [...swapArray]);
       }
     }
@@ -138,41 +138,41 @@ export default function Home() {
         indexes.push(j);
       }
 
-
       let pivotValue = array[end];
       let pivotIndex = start;
       pivots.push(pivotIndex);
 
       for (let i = start; i < end; i++) {
-        document.querySelectorAll<HTMLElement>(`.value-bar`).forEach((bar) => {
-          bar.style.backgroundColor = "white";
-        });
-        
-      indexes.map(
-        (idx) => {
-            if (idx != pivotIndex) {
-              document.querySelector<HTMLElement>(`.bar-${idx}`).style.backgroundColor = "aqua";
-            };
+        compareValues.push(i);
+        changeAllBarsColor("white");
+        indexes.map((idx) => {
+          if (idx != pivotIndex) {
+            changeBarColor(idx, "aqua");
           }
-      );
+        });
 
-        pivots.map(
-          (pivot) =>
-            (document.querySelector<HTMLElement>(`.bar-${pivot}`).style.backgroundColor =
-              "tomato")
-        );
+        compareValues.map((values) => {
+          if (values != pivotIndex) {
+            changeBarColor(values, "green");
+          }
+        });
+
+        pivots.map((pivot) => changeBarColor(pivot, "tomato"));
+
+        await sleep(speed);
 
         if (array[i] < pivotValue) {
-          let swapArray = await swap(array, i, pivotIndex);
+          let swapArray = await swap(array, i, pivotIndex, 0);
           await setValues(() => [...swapArray]);
 
           pivots.splice(pivots.indexOf(pivotIndex), 1);
           pivotIndex++;
           pivots.push(pivotIndex);
         }
+        compareValues.splice(compareValues.indexOf(i), 1);
       }
 
-      let swapArray = await swap(array, pivotIndex, end);
+      let swapArray = await swap(array, pivotIndex, end, speed);
       setValues(() => [...swapArray]);
 
       for (let j = start; j < end; j++) {
@@ -186,29 +186,52 @@ export default function Home() {
   class Merge {
     constructor() {}
 
-    mergeSort(array) {
-      if (array.length > 1) {
-        const half = Math.floor(array.length / 2);
-        const firstHalf = this.mergeSort(array.slice(0, half));
-        const secondHalf = this.mergeSort(array.slice(half));
-        const sortedArray = [];
+    async mergeSortHelper(mainArray, startIdx, endIdx, auxiliaryArray) {
+      if (startIdx === endIdx) return;
+      const middleIdx = Math.floor((startIdx + endIdx) / 2);
+      this.mergeSortHelper(auxiliaryArray, startIdx, middleIdx, mainArray);
+      this.mergeSortHelper(auxiliaryArray, middleIdx + 1, endIdx, mainArray);
+      this.merge(mainArray, startIdx, middleIdx, endIdx, auxiliaryArray);
+    }
 
-        for (let i = 0; i < firstHalf.length; i++) {}
-      } else {
-        return array;
+    async merge(mainArray, startIdx, middleIdx, endIdx, auxiliaryArray) {
+      let k = startIdx;
+      let i = startIdx;
+      let j = middleIdx + 1;
+      let copyArray = mainArray;
+      await sleep(speed);
+      while (i <= middleIdx && j <= endIdx) {
+        if (auxiliaryArray[i] <= auxiliaryArray[j]) {
+          copyArray[k++] = auxiliaryArray[i++];
+          setValues(() => [...copyArray]);
+        } else {
+          copyArray[k++] = auxiliaryArray[j++];
+          setValues(() => [...copyArray]);
+        }
+      }
+
+      while (i <= middleIdx) {
+        copyArray[k++] = auxiliaryArray[i++];
+        setValues(() => [...copyArray]);
+      }
+
+      while (j <= endIdx) {
+        copyArray[k++] = auxiliaryArray[j++];
+        setValues(() => [...copyArray]);
       }
     }
   }
 
-  function getRandomValues(n, max) {
-    setValues(() =>
-      Array.from({ length: n }, () => Math.floor(Math.random() * max))
-    );
-  }
+  useEffect(() => {
+    setValues(() => getRandomValues(150, barMaxHeight));
+    document.querySelector<HTMLElement>(".btn-0").style.backgroundColor =
+      "#343a40";
+    document.querySelector<HTMLElement>(".btn-0").style.color = "white";
+  }, []);
 
   useEffect(() => {
-    getRandomValues(100, 300);
-  }, []);
+    setValues(() => getRandomValues(nValues, barMaxHeight));
+  }, [nValues]);
 
   return (
     <>
@@ -219,13 +242,15 @@ export default function Home() {
         <button
           disabled={algorithmIsRunning}
           className="btn btn-outline-dark"
-          onClick={() => getRandomValues(100, 300)}
+          onClick={() =>
+            setValues(() => getRandomValues(nValues, barMaxHeight))
+          }
         >
           Change Data
         </button>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
-          <div className="m-0 p-0">
+          <div className="m-0 p-0 d-flex align-items-center flex-wrap my-4">
             {sortTypes.map((type, index) => (
               <button
                 disabled={algorithmIsRunning}
@@ -233,17 +258,54 @@ export default function Home() {
                 className={`mx-2 my-lg-0 my-2 btn btn-outline btn-types btn-${index}`}
                 onClick={() => {
                   setSortType(() => type);
-                  document.querySelectorAll<HTMLElement>('.btn-types').forEach(btn => {
-                    btn.style.backgroundColor = "transparent";
-                    btn.style.color = "#343a40";
-                  });
-                  document.querySelector<HTMLElement>(`.btn-${index}`).style.backgroundColor = "#343a40";
-                  document.querySelector<HTMLElement>(`.btn-${index}`).style.color = "white";
+                  document
+                    .querySelectorAll<HTMLElement>(".btn-types")
+                    .forEach((btn) => {
+                      btn.style.backgroundColor = "transparent";
+                      btn.style.color = "#343a40";
+                    });
+                  document.querySelector<HTMLElement>(
+                    `.btn-${index}`
+                  ).style.backgroundColor = "#343a40";
+                  document.querySelector<HTMLElement>(
+                    `.btn-${index}`
+                  ).style.color = "white";
                 }}
               >
                 {type}
               </button>
             ))}
+            <div className="m-0 p-0 mx-2">
+              <p className="m-0">
+                <small className="font-weight-bold">ARRAY SIZE</small>
+              </p>
+              <input
+                disabled={algorithmIsRunning}
+                type="range"
+                min="10"
+                max="150"
+                defaultValue={nValues}
+                onChange={(event) =>
+                  setNValues(() => parseInt(event.target.value))
+                }
+              />
+            </div>
+            <div className="m-0 p-0 mx-2">
+              <p className="m-0">
+                <small className="font-weight-bold">SPEED</small>
+              </p>
+              <input
+                disabled={algorithmIsRunning}
+                type="range"
+                min="1"
+                max="501"
+                step="10"
+                defaultValue={speed}
+                onChange={(event) =>
+                  setSpeed(() => parseInt(event.target.value))
+                }
+              />
+            </div>
           </div>
         </Navbar.Collapse>
         <button
@@ -255,7 +317,7 @@ export default function Home() {
         </button>
       </Navbar>
 
-      <div className="container w-100 d-flex">
+      <div className="container bar-container w-100 d-flex">
         {values &&
           values.map((barHeight, index) => (
             <div
