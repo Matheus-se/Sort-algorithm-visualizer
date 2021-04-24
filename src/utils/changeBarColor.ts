@@ -1,3 +1,6 @@
 export default function changeBarColor(index: number, color: string) {
-    document.querySelector<HTMLElement>(`.bar-${index}`).style.backgroundColor = color;
+    let bar = document.querySelector<HTMLElement>(`.bar-${index}`);
+    if (bar) {
+        bar.style.backgroundColor = color;
+    }
 }

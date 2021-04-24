@@ -18,6 +18,7 @@ export default function Home() {
     "Selection sort",
     "Merge sort",
     "Quick sort",
+    "Heap sort",
   ];
   const pivots = [];
   const compareValues = [];
@@ -51,6 +52,10 @@ export default function Home() {
       case "Selection sort":
         sort = new Selection();
         await sort.selectionSort(values);
+        break;
+      case "Heap sort":
+        sort = new Heap();
+        await sort.heapSort(values.slice(), values.length - 1);
         break;
     }
 
@@ -190,7 +195,7 @@ export default function Home() {
       const middleIdx = Math.floor((startIdx + endIdx) / 2);
       this.mergeSortHelper(auxiliaryArray, startIdx, middleIdx, mainArray);
       this.mergeSortHelper(auxiliaryArray, middleIdx + 1, endIdx, mainArray);
-      this.merge(mainArray, startIdx, middleIdx, endIdx, auxiliaryArray);
+      await this.merge(mainArray, startIdx, middleIdx, endIdx, auxiliaryArray);
 
       return;
     }
@@ -223,6 +228,57 @@ export default function Home() {
     }
   }
 
+  class Heap {
+    constructor() {
+    }
+
+    async heapSort(array, end) {
+      await this.buildMaxHeap(array, end);
+    }
+
+    async buildMaxHeap(array, end) {
+      let arrayLength = end;
+      for (let i = Math.floor(array.length / 2) - 1; i >= 0; i--) {
+        changeAllBarsColor("white");
+        changeBarColor(i, "blue");
+        changeBarColor(i * 2 + 1, "red");
+        changeBarColor(i * 2 + 2, "red");
+        await sleep(speed)
+        await this.max_heapify(array, i, arrayLength);
+      }
+
+      for (let i = array.length - 1; i > 0; i--) {
+        changeAllBarsColor("white");
+        changeBarColor(i, "blue");
+        changeBarColor(0, "red");
+        await swap(array, 0, i, speed);
+        setValues(() => [...array]);
+        arrayLength--;
+        await this.max_heapify(array, 0, arrayLength);
+      }
+    }
+
+    async max_heapify(heap, i, end) {
+      let maxIndex = i;
+      let leftLeaf = i * 2 + 1;
+      let rightLeaf = i * 2 + 2;
+
+      if (heap[leftLeaf] > heap[maxIndex] && leftLeaf <= end) {
+        maxIndex = leftLeaf;
+      }
+
+      if (heap[rightLeaf] > heap[maxIndex] && rightLeaf <= end) {
+        maxIndex = rightLeaf;
+      }
+
+      if (i !== maxIndex) {
+        await swap(heap, i, maxIndex, speed);
+        setValues(() => [...heap]);
+        await this.max_heapify(heap, maxIndex, end);
+      }
+    }
+  }
+
   useEffect(() => {
     setValues(() => getRandomValues(150, barMaxHeight));
     document.querySelector<HTMLElement>(".btn-0").style.backgroundColor =
@@ -251,7 +307,7 @@ export default function Home() {
         </button>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
-          <div className="m-0 p-0 d-flex align-items-center flex-wrap my-4">
+          <div className="m-0 p-0 d-flex align-items-center flex-nowrap my-4 custom-slidebar">
             {sortTypes.map((type, index) => (
               <button
                 disabled={algorithmIsRunning}
