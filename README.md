@@ -8,6 +8,13 @@
 
 This project was created mainly for sort algorithm studies in a different and harder way. It was entirely made with typescript in Next.js, CSS with styled-components, and bootstrap. I had a lot of fun and I want to work more on this project in the future to compare how much I have evolved.
 
+## Algorithms implemented :ballot_box_with_check:
+- Bubble sort
+- Selection sort
+- Merge sort (still in progress)
+- Quick sort
+- Heap sort
+
 ## Depployed project on Vercel :computer:
 
 > https://sort-visualizer-omega.vercel.app/
