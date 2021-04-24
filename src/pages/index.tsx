@@ -12,7 +12,7 @@ export default function Home() {
   const [values, setValues] = useState([]);
   const [nValues, setNValues] = useState(100);
   const [algorithmIsRunning, setAlgorithmIsRunning] = useState(false);
-  const [sortType, setSortType] = useState("Bubble sort");
+  const [sortType, setSortType] = useState("Heap sort");
   const sortTypes = [
     "Bubble sort",
     "Selection sort",
@@ -26,7 +26,7 @@ export default function Home() {
   const barMaxHeight = 300;
   const [speed, setSpeed] = useState(1);
 
-  async function handleType(type) {
+  async function handleType(type: string) {
     let sort;
     setAlgorithmIsRunning(() => true);
     changeAllBarsColor("white");
@@ -79,8 +79,9 @@ export default function Home() {
           changeAllBarsColor("white");
           changeBarColor(i, "red");
           changeBarColor(i - 1, "blue");
+          await sleep(1);
           if (array[i] < array[i - 1]) {
-            let swapArray = await swap(array, i, i - 1, speed);
+            let swapArray = await swap(array, i, i - 1, 0);
             setValues(() => [...swapArray]);
             arrayIsNotSorted = true;
           }
@@ -190,7 +191,7 @@ export default function Home() {
   class Merge {
     constructor() {}
 
-    async mergeSortHelper(mainArray, startIdx, endIdx, auxiliaryArray) {
+    async mergeSortHelper(mainArray: number[], startIdx: number, endIdx: number, auxiliaryArray: number[]) {
       if (startIdx === endIdx) return;
       const middleIdx = Math.floor((startIdx + endIdx) / 2);
       this.mergeSortHelper(auxiliaryArray, startIdx, middleIdx, mainArray);
@@ -200,7 +201,7 @@ export default function Home() {
       return;
     }
 
-    async merge(mainArray, startIdx, middleIdx, endIdx, auxiliaryArray) {
+    async merge(mainArray: number[], startIdx: number, middleIdx: number, endIdx: number, auxiliaryArray: number[]) {
       let k = startIdx;
       let i = startIdx;
       let j = middleIdx + 1;
@@ -232,11 +233,11 @@ export default function Home() {
     constructor() {
     }
 
-    async heapSort(array, end) {
+    async heapSort(array: number[], end: number) {
       await this.buildMaxHeap(array, end);
     }
 
-    async buildMaxHeap(array, end) {
+    async buildMaxHeap(array: number[], end: number) {
       let arrayLength = end;
       for (let i = Math.floor(array.length / 2) - 1; i >= 0; i--) {
         changeAllBarsColor("white");
@@ -258,7 +259,7 @@ export default function Home() {
       }
     }
 
-    async max_heapify(heap, i, end) {
+    async max_heapify(heap: number[], i: number, end: number) {
       let maxIndex = i;
       let leftLeaf = i * 2 + 1;
       let rightLeaf = i * 2 + 2;
@@ -281,9 +282,9 @@ export default function Home() {
 
   useEffect(() => {
     setValues(() => getRandomValues(150, barMaxHeight));
-    document.querySelector<HTMLElement>(".btn-0").style.backgroundColor =
+    document.querySelector<HTMLElement>(".btn-4").style.backgroundColor =
       "#343a40";
-    document.querySelector<HTMLElement>(".btn-0").style.color = "white";
+    document.querySelector<HTMLElement>(".btn-4").style.color = "white";
   }, []);
 
   useEffect(() => {
